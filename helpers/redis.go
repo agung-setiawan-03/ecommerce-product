@@ -2,16 +2,16 @@ package helpers
 
 import (
 	"context"
+	"strings"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
-var RedisClient *redis.Client
+var RedisClient *redis.ClusterClient
 
 func SetupRedis() {
-	client := redis.NewClient(&redis.Options{
-		Addr: GetEnv("REDIS_HOST", "localhost:6379"),
-		DB:  0,
+	client := redis.NewClusterClient(&redis.ClusterOptions{
+		Addrs: strings.Split(GetEnv("REDIS_HOST", "localhost:6379"), ","),
 	})
 
 	ping, err := client.Ping(context.Background()).Result()

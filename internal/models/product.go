@@ -3,16 +3,19 @@ package models
 import (
 	"time"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/go-playground/validator"
+	"github.com/lib/pq"
 )
 
 type Product struct {
-	ID          int
-	Name        string    `json:"name" gorm:"column:name;type:varchar(255)" validate:"required"`
-	Description string    `json:"description" gorm:"column:description;type:text" validate:"required"`
-	Price       float64   `json:"price" gorm:"column:price;type:decimal(10,2)" validate:"required"`
-	UpdatedAt   time.Time `json:"-"`
-	CreatedAt   time.Time `json:"-"`
+	ID              int               `json:"id,omitempty"`
+	Name            string            `json:"name,omitempty" gorm:"column:name;type:varchar(255)" validate:"required"`
+	Description     string            `json:"description,omitempty" gorm:"column:description;type:text" validate:"required"`
+	Price           float64           `json:"price,omitempty" gorm:"column:price;type:decimal(10,2)" validate:"required"`
+	Categories      pq.Int64Array     `json:"categories,omitempty" gorm:"column:categories;type:int[]" validate:"required"`
+	CreatedAt       time.Time         `json:"-"`
+	UpdatedAt       time.Time         `json:"-"`
+	ProductVariants []ProductVariants `json:"variants,omitempty" gorm:"foreignKey:ProductID"`
 }
 
 func (*Product) TableName() string {
@@ -25,10 +28,10 @@ func (l Product) Validate() error {
 }
 
 type ProductCategory struct {
-	ID        int
-	Name      string    `json:"name" gorm:"column:name;type:varchar(255)" validate:"required"`
-	UpdatedAt time.Time `json:"-"`
+	ID        int       `json:"id,omitempty"`
+	Name      string    `json:"name,omitempty" gorm:"column:name;type:varchar(255)" validate:"required"`
 	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
 }
 
 func (*ProductCategory) TableName() string {
@@ -41,13 +44,13 @@ func (l ProductCategory) Validate() error {
 }
 
 type ProductVariants struct {
-	ID        int
-	ProductID int       `json:"product_id" gorm:"column:product_id;type:int"`
-	Color     string    `json:"color" gorm:"column:color;type:varchar(50)" validate:"required"`
-	Size      string    `json:"size" gorm:"column:size;type:varchar(10)" validate:"required"`
-	Quantity  int       `json:"quantity" gorm:"column:quantity;type:int"`
-	UpdatedAt time.Time `json:"-"`
+	ID        int       `json:"id,omitempty"`
+	ProductID int       `json:"product_id,omitempty" gorm:"column:product_id"`
+	Color     string    `json:"color,omitempty" gorm:"column:color;type:varchar(50)" validate:"required"`
+	Size      string    `json:"size,omitempty" gorm:"column:size;type:varchar(10)" validate:"required"`
+	Quantity  int       `json:"quantity,omitempty" gorm:"column:quantity"`
 	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
 }
 
 func (*ProductVariants) TableName() string {

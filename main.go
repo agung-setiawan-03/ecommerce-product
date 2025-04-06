@@ -16,7 +16,7 @@ func main() {
 	helpers.SetupMySQL()
 
 	// load redis 
-	// helpers.SetupRedis()
+	helpers.SetupRedis()
 
 	// run kafka consumer
 	// cmd.ServeKafkaConsumer()
